@@ -1,0 +1,6 @@
+@NumberGen_HostAddress = http://localhost:5100
+
+GET {{NumberGen_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

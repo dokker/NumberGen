@@ -1,0 +1,15 @@
+﻿services:
+  numbergen:
+    image: numbergen
+    ports:
+      - 8080:8080
+    build:
+      context: .
+      dockerfile: NumberGen/Dockerfile
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=administrator1234567!
