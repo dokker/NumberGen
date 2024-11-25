@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using NumberGen.Data;
+
 namespace NumberGen;
 
 public class Program
@@ -5,6 +9,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddDbContext<NumberGenDbContext>();
 
         // Add services to the container.
         builder.Services.AddAuthorization();
