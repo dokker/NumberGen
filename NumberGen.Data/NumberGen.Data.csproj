@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NumberGen.Models\NumberGen.Models.csproj" />
+      <ProjectReference Include="..\NumberGen.Model\NumberGen.Model.csproj" />
     </ItemGroup>
 
 </Project>

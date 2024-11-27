@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumberGen.Data", "NumberGen.Data\NumberGen.Data.csproj", "{159C6440-00A8-4F84-A77F-3DD54C6B98E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumberGen.Models", "NumberGen.Models\NumberGen.Models.csproj", "{75D32A97-6057-4B2A-A2D0-37C00F75439C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumberGen.Model", "NumberGen.Model\NumberGen.Model.csproj", "{75D32A97-6057-4B2A-A2D0-37C00F75439C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

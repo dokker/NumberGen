@@ -23,7 +23,7 @@ namespace NumberGen.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("NumberGen.Models.NgPrime", b =>
+            modelBuilder.Entity("NumberGen.Model.NgPrime", b =>
                 {
                     b.Property<decimal>("Number")
                         .ValueGeneratedOnAdd()

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace NumberGen.Models;
+namespace NumberGen.Model;
 
 public class NgPrime
 {

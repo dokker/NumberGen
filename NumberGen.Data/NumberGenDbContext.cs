@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NumberGen.Data.Configurators;
-using NumberGen.Models;
+using NumberGen.Model;
 
 namespace NumberGen.Data;
 
