@@ -6,7 +6,6 @@ namespace NumberGen.Services;
 
 public class NumberGenService : BackgroundService
 {
-    //private readonly NumberGenDbContext _dbContext;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<NumberGenService> _logger;
 
@@ -20,61 +19,71 @@ public class NumberGenService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        using var scope = _serviceProvider.CreateScope();
+        await using var dbContext = scope.ServiceProvider.GetRequiredService<NumberGenDbContext>();
+        
         _logger.LogInformation("starting number gen service");
+        
+        var lastPrime = dbContext.NgPrimes.OrderByDescending(n => n.Number).Select(n => n.Number).FirstOrDefault();
+
+        if (lastPrime == default)
+        {
+            lastPrime = 1;
+        }
+        
+        var nextNumber = lastPrime + 1;
+        
+        _logger.LogInformation("starting generating prime numbers from last prime: {PrimeNumber}", lastPrime);
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            if (IsPrime(nextNumber, stoppingToken))
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<NumberGenDbContext>();
-                var lastPrime = dbContext.NgPrimes.OrderByDescending(n => n.Number).Select(n => n.Number).FirstOrDefault();
+                var primeEntity = new NgPrime
+                {
+                    Number = nextNumber,
+                    CreatedAt = DateTime.UtcNow,
+                };
                 
-                if (lastPrime == 0)
-                {
-                    lastPrime = 1;
-                }
-                var nextNumber = lastPrime + 1;
-                while (true)
-                {
-                    if (IsPrime(nextNumber))
-                    {
-                        var primeEntity = new NgPrime
-                        {
-                            Number = nextNumber,
-                            CreatedAt = DateTime.UtcNow,
-                        };
-                        
-                        // TODO: store nextNumber value in DB
-                        dbContext.NgPrimes.Add(primeEntity);
-                        dbContext.SaveChanges();
-                        // TODO: send nextNumber in response
+                dbContext.NgPrimes.Add(primeEntity);
+                await dbContext.SaveChangesAsync(stoppingToken);
 
-                        _logger.LogInformation($"Next Prime number found: {nextNumber}");
-                    }
-
-                    nextNumber++;
-                }
+                _logger.LogInformation("Next Prime number found: {nextNumber}", nextNumber);
             }
 
-            await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+            nextNumber++;
         }
-        //throw new NotImplementedException();
+        
+        _logger.LogInformation("stopping number gen service");
     }
     
-    private bool IsPrime(ulong number)
+    private bool IsPrime(ulong number, CancellationToken stoppingToken)
     {
-        if (number < 2) return false;
-        if (number == 2) return true;
+        switch (number)
+        {
+            case < 2:
+                return false;
+            case 2:
+                return true;
+        }
+
         if (number % 2 == 0) return false;
         
         var boundary = (ulong)Math.Floor(Math.Sqrt(number));
+        
         for (ulong x = 3; x <= boundary; x += 2)
         {
+            if (stoppingToken.IsCancellationRequested)
+            {
+                return false;
+            }
+            
             if (number % x == 0)
             {
                 return false;           
             }
         }
+        
         return true;
     }
 }
