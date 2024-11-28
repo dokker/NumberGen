@@ -26,10 +26,7 @@ namespace NumberGen.Data.Migrations
             modelBuilder.Entity("NumberGen.Model.NgPrime", b =>
                 {
                     b.Property<decimal>("Number")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(20,0)");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Number"));
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");

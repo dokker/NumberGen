@@ -85,5 +85,5 @@ public class NumberGenService : BackgroundService
         }
         
         return true;
-    }
+    }   
 }
