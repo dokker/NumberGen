@@ -41,7 +41,20 @@ public class NgPrimeController : Controller
     [Route("generatedprimes")]
     public NgPrimeListResponse GetGeneratedPrimes([FromQuery] PagedRequest request)
     {
-        
-        return null;
+        IQueryable<NgPrime> query = _dbContext.NgPrimes;
+        var pagedQuery = query.Skip(request.PageSize * (request.Page - 1))
+            .Take(request.PageSize).Select(item => new NgPrimeResponse
+            {
+                Number = item.Number,
+                CreatedAt = item.CreatedAt,
+                GenerationTime = item.GenerationTime
+            }).ToList();
+
+        return new NgPrimeListResponse()
+        {
+            Primes = pagedQuery,
+            PageSize = request.PageSize,
+            Page = request.Page
+        };
     }
 }
