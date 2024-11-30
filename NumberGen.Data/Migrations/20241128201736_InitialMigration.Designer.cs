@@ -12,8 +12,8 @@ using NumberGen.Data;
 namespace NumberGen.Data.Migrations
 {
     [DbContext(typeof(NumberGenDbContext))]
-    [Migration("20241114200123_initialMigration")]
-    partial class initialMigration
+    [Migration("20241128201736_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,10 +29,7 @@ namespace NumberGen.Data.Migrations
             modelBuilder.Entity("NumberGen.Model.NgPrime", b =>
                 {
                     b.Property<decimal>("Number")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(20,0)");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Number"));
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
