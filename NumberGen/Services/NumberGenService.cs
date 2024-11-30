@@ -52,6 +52,8 @@ public class NumberGenService : BackgroundService
             }
 
             nextNumber++;
+            // only for testing purposes
+            await Task.Delay(1000, stoppingToken);
         }
         
         _logger.LogInformation("stopping number gen service");
