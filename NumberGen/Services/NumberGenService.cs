@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NumberGen.Data;
+using NumberGen.Extensions;
 using NumberGen.Model;
 
 namespace NumberGen.Services;
@@ -37,7 +38,7 @@ public class NumberGenService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (IsPrime(nextNumber, stoppingToken))
+            if (nextNumber.IsPrime(stoppingToken))
             {
                 var primeEntity = new NgPrime
                 {
@@ -58,34 +59,4 @@ public class NumberGenService : BackgroundService
         
         _logger.LogInformation("stopping number gen service");
     }
-    
-    private bool IsPrime(ulong number, CancellationToken stoppingToken)
-    {
-        switch (number)
-        {
-            case < 2:
-                return false;
-            case 2:
-                return true;
-        }
-
-        if (number % 2 == 0) return false;
-        
-        var boundary = (ulong)Math.Floor(Math.Sqrt(number));
-        
-        for (ulong x = 3; x <= boundary; x += 2)
-        {
-            if (stoppingToken.IsCancellationRequested)
-            {
-                return false;
-            }
-            
-            if (number % x == 0)
-            {
-                return false;           
-            }
-        }
-        
-        return true;
-    }   
 }
