@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using NumberGen.Data;
 using NumberGen.Extensions;
@@ -38,18 +39,28 @@ public class NumberGenService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
+            var stopwatch = Stopwatch.StartNew();
+            
             if (nextNumber.IsPrime(stoppingToken))
             {
+                stopwatch.Stop();
+                var generationTime = stopwatch.ElapsedMilliseconds;
+                
                 var primeEntity = new NgPrime
                 {
                     Number = nextNumber,
                     CreatedAt = DateTime.UtcNow,
+                    GenerationTime = generationTime
                 };
                 
                 dbContext.NgPrimes.Add(primeEntity);
                 await dbContext.SaveChangesAsync(stoppingToken);
-
-                _logger.LogInformation("Next Prime number found: {nextNumber}", nextNumber);
+                _logger.LogInformation("Next Prime number found: {nextNumber}. Generation time: {generationTime}",
+                    nextNumber, generationTime);
+            }
+            else
+            {
+                stopwatch.Stop();
             }
 
             nextNumber++;
