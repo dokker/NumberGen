@@ -18,12 +18,13 @@ public class NgPrimeController : Controller
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
+    // TODO: rewrite to async
     [HttpGet]
     [Route("lastprime")]
-    public NgPrimeResponse GetLastPrime()
+    public async Task<NgPrimeResponse> GetLastPrime()
     {
         
-        var ngPrime = _dbContext.NgPrimes.OrderByDescending(prime => prime.CreatedAt).FirstOrDefault();
+        var ngPrime = await _dbContext.NgPrimes.OrderByDescending(prime => prime.CreatedAt).FirstOrDefaultAsync();
         if (ngPrime == null)
         {
             throw new ArgumentNullException(nameof(ngPrime));
@@ -37,18 +38,19 @@ public class NgPrimeController : Controller
         };
     }
 
+    // TODO: rewrite to async
     [HttpGet]
     [Route("generatedprimes")]
-    public NgPrimeListResponse GetGeneratedPrimes([FromQuery] PagedRequest request)
+    public async Task<NgPrimeListResponse> GetGeneratedPrimes([FromQuery] PagedRequest request)
     {
         IQueryable<NgPrime> query = _dbContext.NgPrimes;
-        var pagedQuery = query.Skip(request.PageSize * (request.Page - 1))
+        var pagedQuery = await query.Skip(request.PageSize * (request.Page - 1))
             .Take(request.PageSize).Select(item => new NgPrimeResponse
             {
                 Number = item.Number,
                 CreatedAt = item.CreatedAt,
                 GenerationTime = item.GenerationTime
-            }).ToList();
+            }).ToListAsync();
 
         return new NgPrimeListResponse()
         {

@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using NumberGen.Data;
+using NumberGen.Extensions;
 using NumberGen.Model;
 
 namespace NumberGen.Services;
@@ -35,20 +37,27 @@ public class NumberGenService : BackgroundService
         
         _logger.LogInformation("starting generating prime numbers from last prime: {PrimeNumber}", lastPrime);
 
+        var stopwatch = new Stopwatch();
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (IsPrime(nextNumber, stoppingToken))
+            stopwatch.Restart();
+            var isPrime = nextNumber.IsPrime(stoppingToken);
+            stopwatch.Stop();
+            var generationTime = stopwatch.ElapsedTicks;
+            
+            if (isPrime)
             {
                 var primeEntity = new NgPrime
                 {
                     Number = nextNumber,
                     CreatedAt = DateTime.UtcNow,
+                    GenerationTime = generationTime
                 };
                 
                 dbContext.NgPrimes.Add(primeEntity);
                 await dbContext.SaveChangesAsync(stoppingToken);
-
-                _logger.LogInformation("Next Prime number found: {nextNumber}", nextNumber);
+                _logger.LogInformation("Next Prime number found: {nextNumber}. Generation time: {generationTime}",
+                    nextNumber, generationTime);
             }
 
             nextNumber++;
@@ -58,34 +67,4 @@ public class NumberGenService : BackgroundService
         
         _logger.LogInformation("stopping number gen service");
     }
-    
-    private bool IsPrime(ulong number, CancellationToken stoppingToken)
-    {
-        switch (number)
-        {
-            case < 2:
-                return false;
-            case 2:
-                return true;
-        }
-
-        if (number % 2 == 0) return false;
-        
-        var boundary = (ulong)Math.Floor(Math.Sqrt(number));
-        
-        for (ulong x = 3; x <= boundary; x += 2)
-        {
-            if (stoppingToken.IsCancellationRequested)
-            {
-                return false;
-            }
-            
-            if (number % x == 0)
-            {
-                return false;           
-            }
-        }
-        
-        return true;
-    }   
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NumberGen.Data;
 
@@ -11,9 +12,11 @@ using NumberGen.Data;
 namespace NumberGen.Data.Migrations
 {
     [DbContext(typeof(NumberGenDbContext))]
-    partial class NumberGenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241209132659_UpdateNgPrimeGenerationTimeToLong")]
+    partial class UpdateNgPrimeGenerationTimeToLong
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
