@@ -14,9 +14,11 @@ public class UlongExtensionsTests
         _faker = new Faker();
     }
     
-    // TODO: write a couple of different cases
     [Theory]
+    [InlineData(1, false)]
     [InlineData(2, true)]
+    [InlineData(8, false)]
+    [InlineData(11, true)]
     public void IsPrimeShouldDeterminePrimeNumber(ulong number, bool expectedResult)
     {
         // arrange act assert
