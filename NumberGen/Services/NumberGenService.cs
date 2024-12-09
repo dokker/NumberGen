@@ -37,15 +37,16 @@ public class NumberGenService : BackgroundService
         
         _logger.LogInformation("starting generating prime numbers from last prime: {PrimeNumber}", lastPrime);
 
+        var stopwatch = new Stopwatch();
         while (!stoppingToken.IsCancellationRequested)
         {
-            var stopwatch = Stopwatch.StartNew();
+            stopwatch.Restart();
+            var isPrime = nextNumber.IsPrime(stoppingToken);
+            stopwatch.Stop();
+            var generationTime = stopwatch.ElapsedTicks;
             
-            if (nextNumber.IsPrime(stoppingToken))
+            if (isPrime)
             {
-                stopwatch.Stop();
-                var generationTime = stopwatch.ElapsedMilliseconds;
-                
                 var primeEntity = new NgPrime
                 {
                     Number = nextNumber,
@@ -57,10 +58,6 @@ public class NumberGenService : BackgroundService
                 await dbContext.SaveChangesAsync(stoppingToken);
                 _logger.LogInformation("Next Prime number found: {nextNumber}. Generation time: {generationTime}",
                     nextNumber, generationTime);
-            }
-            else
-            {
-                stopwatch.Stop();
             }
 
             nextNumber++;
